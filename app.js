@@ -1,17 +1,18 @@
-require('dotenv').config();
-const TelegramBot = require('node-telegram-bot-api');
-const { Configuration, OpenAIApi } = require('openai');
-const schedule = require('node-schedule');
-const { botHobbies } = require('./getBotHobbies')
+import dotenv from 'dotenv';
+dotenv.config();
+import TelegramBot from 'node-telegram-bot-api';
+import OpenAI from 'openai';
+import schedule from 'node-schedule';
+import { botHobbies } from './getBotHobbies.js';
 
 // Telegram and OpenAI API tokens
 const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN;
 const OPENAI_API_TOKEN = process.env.OPENAI_API_TOKEN;
 
 // OpenAI API initialization
-const openai = new OpenAIApi(new Configuration({
+const openai = new OpenAI({
     apiKey: OPENAI_API_TOKEN,
-}));
+});
 
 // Telegram bot initialization
 const bot = new TelegramBot(TELEGRAM_TOKEN, { polling: true });
@@ -38,8 +39,8 @@ bot.on('message', async (msg) => {
 
     // Response generation via OpenAI
     try {
-        const response = await openai.createChatCompletion({
-            model: "gpt-4o",
+        const response = await openai.chat.completions.create({
+            model: "gpt-4",
             messages: [
                 {
                     role: "system",
@@ -52,7 +53,7 @@ bot.on('message', async (msg) => {
             ],
         });
 
-        const botReply = response.data.choices[0].message.content;
+        const botReply = response.choices[0].message.content;
 
         // We keep the "memory" of the interaction
         botPersonality.log.push(
@@ -70,15 +71,15 @@ bot.on('message', async (msg) => {
     }
 });
 
-// Planner for "messages from life"
-schedule.scheduleJob('0 9 * * *', () => { // Message at 9:00
-    bot.sendMessage("bestfriend_openAI_Bot", "Добрий ранок, ти як?")
+// Scheduler and other functionalities
+schedule.scheduleJob('0 9 * * *', () => {
+    bot.sendMessage("bestfriend_openAI_Bot", "Добрий ранок, ти як?");
 });
 
-schedule.scheduleJob('0 21 * * *', async () => { // Message at 21:00
+schedule.scheduleJob('0 21 * * *', async () => {
     try {
-        const response = await openai.createChatCompletion({
-            model: "gpt-4o",
+        const response = await openai.chat.completions.create({
+            model: "gpt-4",
             messages: [
                 {
                     role: "system",
@@ -87,7 +88,7 @@ schedule.scheduleJob('0 21 * * *', async () => { // Message at 21:00
             ],
         });
 
-        const dynamicThought = response.data.choices[0].message.content;
+        const dynamicThought = response.choices[0].message.content;
         bot.sendMessage("bestfriend_openAI_Bot", dynamicThought);
     } catch (error) {
         console.error("Random evening message text generation error: ", error);
@@ -96,8 +97,8 @@ schedule.scheduleJob('0 21 * * *', async () => { // Message at 21:00
 });
 
 schedule.scheduleJob('*/15 * * * *', async () => {
-    const randomMessages = await openai.createChatCompletion({
-        model: "gpt-4o",
+    const randomMessages = await openai.chat.completions.create({
+        model: "gpt-4",
         messages: [
             {
                 role: "system",
@@ -105,15 +106,12 @@ schedule.scheduleJob('*/15 * * * *', async () => {
             },
         ],
     });
-    
-    const message = randomMessages[Math.floor(Math.random() * randomMessages.length)];
-    
-    bot.sendMessage("bestfriend_openAI_Bot", message);
+
+    const message = randomMessages.choices[Math.floor(Math.random() * randomMessages.choices.length)];
+    bot.sendMessage("bestfriend_openAI_Bot", message.content);
     
     const nextInterval = Math.random() * (120 - 90) + 90;
-    setTimeout(sendRandomMessage, nextInterval * 60 * 1000);
-    
-    bot.sendMessage("bestfriend_openAI_Bot", randomActions[Math.floor(Math.random() * randomActions.length)]);
+    setTimeout(() => {}, nextInterval * 60 * 1000);
 });
 
 console.log(`${botPersonality.name} is ready!`);

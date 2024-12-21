@@ -1,7 +1,8 @@
 {
+  "type": "module",
   "name": "the-best-friend-in-telegram",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,8 +11,12 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "dotenv": "^16.4.7",
+    "fs": "^0.0.1-security",
     "node-schedule": "^2.1.1",
     "node-telegram-bot-api": "^0.66.0",
-    "openai": "^4.77.0"
+    "openai": "^4.77.0",
+    "openai-node": "^1.0.5",
+    "uuid": "^11.0.3"
   }
 }

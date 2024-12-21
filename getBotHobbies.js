@@ -1,4 +1,4 @@
-const fs = require('fs');
+import fs from 'fs';
 
 const data = fs.readFileSync('./resources/botHobbies.txt', 'utf-8');
 

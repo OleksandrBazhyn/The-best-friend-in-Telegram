@@ -40,7 +40,7 @@ bot.on('message', async (msg) => {
     // Response generation via OpenAI
     try {
         const response = await openai.chat.completions.create({
-            model: "gpt-4",
+            model: "gpt-4o",
             messages: [
                 {
                     role: "system",
@@ -79,7 +79,7 @@ schedule.scheduleJob('0 9 * * *', () => {
 schedule.scheduleJob('0 21 * * *', async () => {
     try {
         const response = await openai.chat.completions.create({
-            model: "gpt-4",
+            model: "gpt-4o",
             messages: [
                 {
                     role: "system",
@@ -98,7 +98,7 @@ schedule.scheduleJob('0 21 * * *', async () => {
 
 schedule.scheduleJob('*/15 * * * *', async () => {
     const randomMessages = await openai.chat.completions.create({
-        model: "gpt-4",
+        model: "gpt-4o",
         messages: [
             {
                 role: "system",

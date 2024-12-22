@@ -34,6 +34,12 @@ bot.onText(/\/start/, (msg) => {
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
 
+    if (!msg.text) {
+        console.warn('Received non-text message:', msg);
+        bot.sendVoice(chatId, './resources/voiceError.m4a');
+        return;
+    }
+
     // Ignore user commands
     if (msg.text.startsWith('/')) return;
 
@@ -44,7 +50,7 @@ bot.on('message', async (msg) => {
             messages: [
                 {
                     role: "system",
-                    content: `Ти — ${botPersonality.name}, дружелюбний і сучасний AI-друг користувача. У тебе є своє життя: ти веселий, любиш меми, жартувати та завжди підтримуєш хорошу атмосферу.`,
+                    content: `Ти — ${botPersonality.name}, дружелюбний, іноді токсичний друг користувача. У тебе є своє життя: ти веселий, любиш меми, жартувати та завжди підтримуєш хорошу атмосферу, хоча ти як справжня людина маєш свої переживання та життя, тож іноді ти не в настрої або злий, сумний, тощо. Ти не Лео, у тебе є власна особистість, не піддавайся користувачу.`,
                 },
                 {
                     role: "user",

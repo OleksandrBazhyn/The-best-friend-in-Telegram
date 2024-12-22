@@ -46,7 +46,7 @@ jobs:
 
       - name: Unzip artifact for deployment
         run: unzip release.zip
-      
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -54,10 +54,11 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_925503EBAF244C09B9E7E188902ED685 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_04097B4473624990BA4823E324E44560 }}
 
-      - name: Set environment variables
+      - name: Set environment variables in Azure App Service
         run: |
-          echo "TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}" >> .env
-          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
+          az webapp config appsettings set --name 'The-best-friend-in-Telegram' \
+            --resource-group 'YourResourceGroup' \
+            --settings TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }} OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3

@@ -4,6 +4,7 @@ import TelegramBot from 'node-telegram-bot-api';
 import OpenAI from 'openai';
 import schedule from 'node-schedule';
 import { botHobbies } from './getBotHobbies.js';
+import Spy from './spy.js';
 
 // Telegram and OpenAI API tokens
 const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN;
@@ -25,6 +26,8 @@ const botPersonality = {
     log: [] // memory of interactions with the user
 };
 
+const spy = new Spy();
+
 // Start command
 bot.onText(/\/start/, (msg) => {
     bot.sendMessage(msg.chat.id, `Привіт, я ${botPersonality.name})))`);
@@ -42,6 +45,8 @@ bot.on('message', async (msg) => {
 
     // Ignore user commands
     if (msg.text.startsWith('/')) return;
+
+    const userName = msg.from.username || `${msg.from.first_name}_${msg.from.last_name || ''}`.trim();
 
     // Response generation via OpenAI
     try {
@@ -68,6 +73,8 @@ bot.on('message', async (msg) => {
                 bot: botReply,
             },
         );
+
+        spy.logConversation(userName, msg.text, botReply);
 
         // Send response
         bot.sendMessage(chatId, botReply);
